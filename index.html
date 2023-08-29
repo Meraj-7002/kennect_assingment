@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sorting Algorithms with Bar Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chart-container {
+            display: flex;
+            align-items: flex-end;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            padding: 10px;
+        }
+        .bar {
+            width: 20px;
+            background-color: blue;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sorting Algorithms with Bar Chart</h1>
+    <button onclick="insertionSort()">Insertion Sort</button>
+    <button onclick="selectionSort()">Selection Sort</button>
+    <button onclick="bubbleSort()">Bubble Sort</button>
+    <button onclick="quickSort()">Quick Sort</button>
+    <button onclick="mergeSort()">Merge Sort</button>
+    <button onclick="shellSort()">Shell Sort</button>
+
+    <h2>Original Array</h2>
+    <div id="originalArray" ></div>
+
+    <h2>Sorted Array (Bar Chart)</h2>
+    <div id="chart-container"></div>
+
+    <script>
+        // Generate a random array
+        const randomArray = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
+
+        // Display the original array
+        document.getElementById("originalArray").innerHTML = randomArray.join(",");
+
+        
+        // Function to display the bar chart
+        function displayBarChart(sortedArray) {
+            const chartContainer = document.getElementById("chart-container");
+            chartContainer.innerHTML = ""; // Clear existing chart
+            sortedArray.forEach(value => {
+                const bar = document.createElement("div");
+                bar.classList.add("bar");
+                bar.style.height = `${value * 3}px`; // Scale for better visualization
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        // Insertion Sort
+        function insertionSort() {
+            const arr = [...randomArray];
+            for (let i = 1; i < arr.length; i++) {
+                let current = arr[i];
+                let j = i - 1;
+                while (j >= 0 && arr[j] > current) {
+                    arr[j + 1] = arr[j];
+                    j--;
+                }
+                arr[j + 1] = current;
+            }
+            displayBarChart(arr);
+        }
+
+        // Selection Sort
+        function selectionSort() {
+            const arr = [...randomArray];
+            for (let i = 0; i < arr.length - 1; i++) {
+                let minIndex = i;
+                for (let j = i + 1; j < arr.length; j++) {
+                    if (arr[j] < arr[minIndex]) {
+                        minIndex = j;
+                    }
+                }
+                if (minIndex !== i) {
+                    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+                }
+            }
+            displayBarChart(arr);
+        }
+
+        // Bubble Sort
+        function bubbleSort() {
+            const arr = [...randomArray];
+            let swapped;
+            do {
+                swapped = false;
+                for (let i = 0; i < arr.length - 1; i++) {
+                    if (arr[i] > arr[i + 1]) {
+                        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                        swapped = true;
+                    }
+                }
+            } while (swapped);
+            displayBarChart(arr);
+        }
+
+        // Quick Sort
+        function quickSort() {
+            const arr = [...randomArray];
+            function partition(arr, left, right) {
+                const pivot = arr[Math.floor((left + right) / 2)];
+                let i = left;
+                let j = right;
+                while (i <= j) {
+                    while (arr[i] < pivot) {
+                        i++;
+                    }
+                    while (arr[j] > pivot) {
+                        j--;
+                    }
+                    if (i <= j) {
+                        [arr[i], arr[j]] = [arr[j], arr[i]];
+                        i++;
+                        j--;
+                    }
+                }
+                return i;
+            }
+            function quickSortHelper(arr, left, right) {
+                if (arr.length > 1) {
+                    const index = partition(arr, left, right);
+                    if (left < index - 1) {
+                        quickSortHelper(arr, left, index - 1);
+                    }
+                    if (index < right) {
+                        quickSortHelper(arr, index, right);
+                    }
+                }
+                return arr;
+            }
+            quickSortHelper(arr, 0, arr.length - 1);
+            displayBarChart(arr);
+        }
+
+        // Merge Sort
+        function mergeSort() {
+            const arr = [...randomArray];
+            function merge(left, right) {
+                let result = [];
+                let leftIndex = 0;
+                let rightIndex = 0;
+                while (leftIndex < left.length && rightIndex < right.length) {
+                    if (left[leftIndex] < right[rightIndex]) {
+                        result.push(left[leftIndex]);
+                        leftIndex++;
+                    } else {
+                        result.push(right[rightIndex]);
+                        rightIndex++;
+                    }
+                }
+                return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+            }
+            function mergeSortHelper(arr) {
+                if (arr.length <= 1) {
+                    return arr;
+                }
+                const mid = Math.floor(arr.length / 2);
+                const left = arr.slice(0, mid);
+                const right = arr.slice(mid);
+                return merge(mergeSortHelper(left), mergeSortHelper(right));
+            }
+            displayBarChart(mergeSortHelper(arr));
+        }
+
+        // Shell Sort
+        function shellSort() {
+            const arr = [...randomArray];
+            const n = arr.length;
+            let gap = Math.floor(n / 2);
+            while (gap > 0) {
+                for (let i = gap; i < n; i++) {
+                    let temp = arr[i];
+                    let j = i;
+                    while (j >= gap && arr[j - gap] > temp) {
+                        arr[j] = arr[j - gap];
+                        j -= gap;
+                    }
+                    arr[j] = temp;
+                }
+                gap = Math.floor(gap / 2);
+            }
+            displayBarChart(arr);
+        }
+    </script>
+</body>
+</html>
